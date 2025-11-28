@@ -11,11 +11,11 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "NutriLens",
+              'NutriLens',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
             ),
             const Text(
-              "Jaga nutrisimu, jaga kesehatanmu!",
+              'Jaga nutrisimu, jaga kesehatanmu!',
               style: TextStyle(fontSize: 16),
             ),
           ],
