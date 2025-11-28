@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutrilens/presentation/widgets/card/nutrient_card_widget.dart';
+import 'package:nutrilens/presentation/widgets/card/nutrilent_card_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
