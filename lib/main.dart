@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutrilens/presentation/pages/home_page.dart';
+import 'package:nutrilens/presentation/widget_tree.dart';
 
 void main() {
   runApp(const NutriLens());
@@ -11,12 +11,13 @@ class NutriLens extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'NutriLens',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.teal),
+        colorScheme: .fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const WidgetTree(),
     );
   }
 }
