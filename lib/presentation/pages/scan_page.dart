@@ -38,13 +38,11 @@ class _ScanPageState extends State<ScanPage> {
   Future<void> _initSpeech() async {
     _speechEnabled = await _speechToText.initialize(
       onError: (error) {
-        print('Speech recognition error: $error');
         setState(() {
           _isListening = false;
         });
       },
       onStatus: (status) {
-        print('Speech recognition status: $status');
         if (status == 'done' || status == 'notListening') {
           setState(() {
             _isListening = false;
@@ -67,10 +65,14 @@ class _ScanPageState extends State<ScanPage> {
           _infoController.text = result.recognizedWords;
         });
       },
+      listenOptions: stt.SpeechListenOptions(
+        listenMode: stt.ListenMode.dictation,
+        partialResults: true,
+        cancelOnError: true,
+        onDevice: false,
+      ),
       listenFor: const Duration(seconds: 30),
       pauseFor: const Duration(seconds: 5),
-      partialResults: true,
-      cancelOnError: true,
       localeId: 'id_ID',
     );
 
@@ -332,7 +334,7 @@ class _ScanPageState extends State<ScanPage> {
                 color: Colors.grey.shade200,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8.0,
                     offset: const Offset(0, -2),
                   ),

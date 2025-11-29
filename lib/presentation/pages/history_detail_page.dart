@@ -12,7 +12,7 @@ class HistoryDetailPage extends StatelessWidget {
 
     return Scaffold(
       // Pakai warna background dari theme supaya konsisten dengan halaman lain
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: const Text('Detail Riwayat'),
         centerTitle: true,
