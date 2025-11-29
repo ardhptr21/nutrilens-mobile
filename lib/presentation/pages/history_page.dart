@@ -220,10 +220,7 @@ class _HistoryItemCard extends StatelessWidget {
               // Row 2: Progress Nutrisi Makro (protein, fat, carbs)
               _NutrientProgressRow(item: item),
               const SizedBox(height: 12),
-              // Row 3: Ringkasan Menu
-              _MealSummary(meals: item.mealSummary),
-              const SizedBox(height: 12),
-              // Row 4: Tombol Lihat Detail
+              // Row 3: Tombol Lihat Detail
               SizedBox(
                 width: double.infinity,
                 child: Text(
@@ -310,7 +307,7 @@ class _NutrientProgressRow extends StatelessWidget {
           label: 'Protein',
           value: item.protein,
           max: 100,
-          color: Colors.blue,
+          color: Colors.yellow,
         ),
         const SizedBox(width: 12),
         _NutrientIndicator(
@@ -324,7 +321,7 @@ class _NutrientProgressRow extends StatelessWidget {
           label: 'Karbo',
           value: item.carbs,
           max: 300,
-          color: Colors.amber,
+          color: Colors.red,
         ),
       ],
     );
@@ -380,54 +377,6 @@ class _NutrientIndicator extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Widget untuk menampilkan ringkasan menu yang dimakan.
-class _MealSummary extends StatelessWidget {
-  final List<String> meals;
-
-  const _MealSummary({required this.meals});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Menu Hari Ini',
-          style: theme.textTheme.labelSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Colors.black54,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Wrap(
-          spacing: 8,
-          runSpacing: 6,
-          children: meals
-              .map(
-                (meal) => Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    meal,
-                    style: theme.textTheme.labelSmall?.copyWith(fontSize: 12),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-      ],
     );
   }
 }
