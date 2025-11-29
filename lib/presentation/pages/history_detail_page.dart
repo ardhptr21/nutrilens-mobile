@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'history_page.dart' show NutritionHistory;
+import 'package:nutrilens/models/nutrition_model.dart';
 
 class HistoryDetailPage extends StatelessWidget {
-  final NutritionHistory nutritionHistory;
+  final NutritionModel nutrition;
 
-  const HistoryDetailPage({
-    required this.nutritionHistory,
-    super.key,
-  });
+  const HistoryDetailPage({required this.nutrition, super.key});
 
   @override
   Widget build(BuildContext context) {
