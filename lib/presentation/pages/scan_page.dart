@@ -1,10 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nutrilens/presentation/widgets/scan/image_placeholder_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'dart:io';
-import 'package:nutrilens/presentation/pages/image_preview_page.dart';
-import 'package:nutrilens/presentation/widgets/scan/image_placeholder_widget.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -16,7 +16,7 @@ class ScanPage extends StatefulWidget {
 class _ScanPageState extends State<ScanPage> {
   final TextEditingController _infoController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  final stt.SpeechToText _speechToText = stt.SpeechToText();
+  final stt.SpeechToText _speech = stt.SpeechToText();
 
   File? _capturedImage;
   bool _speechEnabled = false;
@@ -31,22 +31,16 @@ class _ScanPageState extends State<ScanPage> {
   @override
   void dispose() {
     _infoController.dispose();
-    _speechToText.stop();
+    _speech.stop();
     super.dispose();
   }
 
   Future<void> _initSpeech() async {
-    _speechEnabled = await _speechToText.initialize(
-      onError: (error) {
-        setState(() {
-          _isListening = false;
-        });
-      },
+    _speechEnabled = await _speech.initialize(
+      onError: (_) => setState(() => _isListening = false),
       onStatus: (status) {
-        if (status == 'done' || status == 'notListening') {
-          setState(() {
-            _isListening = false;
-          });
+        if (status == 'notListening' || status == 'done') {
+          setState(() => _isListening = false);
         }
       },
     );
@@ -59,76 +53,74 @@ class _ScanPageState extends State<ScanPage> {
       return;
     }
 
-    await _speechToText.listen(
+    await _speech.listen(
       onResult: (result) {
-        setState(() {
-          _infoController.text = result.recognizedWords;
-        });
+        final spoken = result.recognizedWords.trim();
+
+        if (spoken.isEmpty) return;
+
+        if (result.finalResult) {
+          setState(() {
+            final current = _infoController.text.trim();
+
+            if (current.isEmpty) {
+              _infoController.text = spoken;
+            } else {
+              _infoController.text = '$current $spoken';
+            }
+          });
+        }
       },
+
       listenOptions: stt.SpeechListenOptions(
-        listenMode: stt.ListenMode.dictation,
         partialResults: true,
-        cancelOnError: true,
+        listenMode: stt.ListenMode.dictation,
         onDevice: false,
       ),
-      listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 5),
+      pauseFor: const Duration(seconds: 2),
       localeId: 'id_ID',
     );
 
-    setState(() {
-      _isListening = true;
-    });
+    setState(() => _isListening = true);
   }
 
   Future<void> _stopListening() async {
-    await _speechToText.stop();
+    await _speech.stop();
     setState(() {
       _isListening = false;
     });
   }
 
   void _toggleListening() {
-    if (_isListening) {
-      _stopListening();
-    } else {
-      _startListening();
-    }
+    _isListening ? _stopListening() : _startListening();
   }
 
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
 
-    if (status.isGranted) {
-      _openCamera();
-    } else if (status.isDenied) {
-      _showPermissionDialog(
-        'Izin Kamera Diperlukan',
-        'Silakan berikan izin kamera untuk mengambil foto.',
-      );
-    } else if (status.isPermanentlyDenied) {
-      _showPermissionDialog(
-        'Izin Kamera Ditolak',
-        'Izin kamera secara permanen ditolak. Silahkan aktifkan di pengaturan aplikasi.',
-        showSettings: true,
-      );
-    }
+    if (status.isGranted) return _openCamera();
+
+    final isPermanent = status.isPermanentlyDenied;
+
+    _showPermissionDialog(
+      isPermanent ? 'Izin Kamera Ditolak' : 'Izin Kamera Diperlukan',
+      isPermanent
+          ? 'Izin kamera ditolak secara permanen. Buka pengaturan untuk mengaktifkan.'
+          : 'Silakan berikan izin kamera untuk mengambil foto.',
+      showSettings: isPermanent,
+    );
   }
 
   Future<void> _openCamera() async {
     try {
       final XFile? photo = await _picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 85,
         preferredCameraDevice: CameraDevice.rear,
+        imageQuality: 85,
       );
 
       if (photo != null) {
-        setState(() {
-          _capturedImage = File(photo.path);
-        });
-
-        _navigateToPreview();
+        setState(() => _capturedImage = File(photo.path));
       }
     } catch (e) {
       _showErrorDialog('Gagal menangkap gambar: $e');
@@ -143,35 +135,17 @@ class _ScanPageState extends State<ScanPage> {
       );
 
       if (image != null) {
-        setState(() {
-          _capturedImage = File(image.path);
-        });
-
-        _navigateToPreview();
+        setState(() => _capturedImage = File(image.path));
       }
     } catch (e) {
       _showErrorDialog('Gagal memilih gambar: $e');
     }
   }
 
-  void _navigateToPreview() {
-    if (_capturedImage != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ImagePreviewPage(
-            imageFile: _capturedImage!,
-            additionalInfo: _infoController.text,
-          ),
-        ),
-      );
-    }
-  }
-
   void _showImageSourceDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: const Text('Pilih Sumber Gambar'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -200,50 +174,41 @@ class _ScanPageState extends State<ScanPage> {
 
   void _showPermissionDialog(
     String title,
-    String message, {
+    String msg, {
     bool showSettings = false,
   }) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text(title),
-        content: Text(message),
+        content: Text(msg),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
             child: const Text('Batal'),
+            onPressed: () => Navigator.pop(context),
           ),
-          if (showSettings)
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                openAppSettings();
-              },
-              child: const Text('Buka pengaturan'),
-            )
-          else
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _requestCameraPermission();
-              },
-              child: const Text('Berikan Izin'),
-            ),
+          TextButton(
+            child: Text(showSettings ? 'Buka Pengaturan' : 'Berikan Izin'),
+            onPressed: () {
+              Navigator.pop(context);
+              showSettings ? openAppSettings() : _requestCameraPermission();
+            },
+          ),
         ],
       ),
     );
   }
 
-  void _showErrorDialog(String message) {
+  void _showErrorDialog(String msg) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: const Text('Error'),
-        content: Text(message),
+        content: Text(msg),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
             child: const Text('OK'),
+            onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
@@ -252,93 +217,106 @@ class _ScanPageState extends State<ScanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textTheme = theme.textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      appBar: AppBar(title: const Text('Pindai Gambar'), centerTitle: true),
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 40.0,
-                    horizontal: 32.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                padding: const EdgeInsets.symmetric(
+                  vertical: 40,
+                  horizontal: 32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ImagePlaceholderWidget(
+                      capturedImage: _capturedImage,
+                      onTap: _showImageSourceDialog,
+                    ),
+                    if (_capturedImage != null) ...[
+                      const SizedBox(height: 6),
                       Text(
-                        'Pindai',
-                        style: textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 24.0),
-                      ImagePlaceholderWidget(
-                        capturedImage: _capturedImage,
-                        onTap: _showImageSourceDialog,
-                      ),
-                      const SizedBox(height: 24.0),
-                      Text(
-                        'Informasi Tambahan (Optional)',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: _isListening
-                                ? Colors.green
-                                : Colors.grey.shade400,
-                            width: _isListening ? 2.0 : 1.5,
-                          ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: TextField(
-                          controller: _infoController,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.all(12.0),
-                            hintText: 'Tambahkan informasi tambahan...',
-                            hintStyle: TextStyle(color: Colors.grey.shade500),
-                            suffixIcon: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: IconButton(
-                                icon: Icon(
-                                  _isListening ? Icons.mic : Icons.mic_none,
-                                  color: _isListening
-                                      ? Colors.green
-                                      : Colors.grey.shade600,
-                                  size: 28,
-                                ),
-                                onPressed: _toggleListening,
-                              ),
-                            ),
-                          ),
+                        'Ketuk gambar di atas untuk mengganti foto.',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],
-                  ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Informasi Tambahan (Optional)',
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      padding: const EdgeInsets.only(bottom: 8, right: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: _isListening
+                              ? Colors.green
+                              : Colors.grey.shade400,
+                          width: _isListening ? 2.5 : 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 48),
+                            child: TextField(
+                              controller: _infoController,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.all(12),
+                                hintText: 'Tambahkan informasi tambahan...',
+                                hintStyle: TextStyle(
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(
+                                _isListening ? Icons.mic : Icons.mic_none,
+                                color: _isListening
+                                    ? Colors.green
+                                    : Colors.grey.shade600,
+                              ),
+                              onPressed: _toggleListening,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () {},
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Lanjutkan'),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8.0,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
               ),
             ),
           ],

@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 
 class ImagePlaceholderWidget extends StatelessWidget {
   final File? capturedImage;
@@ -19,7 +20,7 @@ class ImagePlaceholderWidget extends StatelessWidget {
         width: double.infinity,
         height: 220,
         decoration: BoxDecoration(
-          color: Colors.green.shade300,
+          color: Colors.green.shade100,
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(color: Colors.green.shade400, width: 1.5),
         ),
