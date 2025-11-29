@@ -6,22 +6,26 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 40.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Hai, NutriZen!', style: TextStyle(fontSize: 18.0)),
-            const Text(
+            Text('Hai, NutriZen!', style: textTheme.titleMedium),
+            Text(
               'Ardhi Putra Pradana',
-              style: TextStyle(
-                fontSize: 24.0,
+              style: textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.green,
+                color: theme.colorScheme.primary,
               ),
             ),
-            SizedBox(height: 40.0),
+
+            const SizedBox(height: 40.0),
+
             Center(
               child: Container(
                 width: 250,
@@ -34,7 +38,7 @@ class HomePage extends StatelessWidget {
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
+                    children: const [
                       Text(
                         '1280',
                         style: TextStyle(
@@ -52,15 +56,17 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 40.0),
+
+            const SizedBox(height: 40.0),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(color: Colors.grey.shade300, width: 1.0),
               ),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: [
+                children: const [
                   NutrientCardWidget(
                     title: 'Protein',
                     value: 50,
