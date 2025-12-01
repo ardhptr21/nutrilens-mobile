@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class NutrientCardWidget extends StatelessWidget {
   final String title;
-  final int value;
-  final int total;
+  final double value;
+  final double total;
   final Color color;
 
   const NutrientCardWidget({

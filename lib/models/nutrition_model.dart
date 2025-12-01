@@ -1,19 +1,73 @@
-class NutritionModel {
-  final String id;
-  final DateTime date;
-  final int totalCalories;
-  final int calorieGoal;
-  final int protein;
-  final int fat;
-  final int carbs;
+import 'package:nutrilens/models/meal_model.dart';
 
-  const NutritionModel({
-    required this.id,
-    required this.date,
-    required this.totalCalories,
-    required this.calorieGoal,
-    required this.protein,
+class NutritionModel {
+  final DateTime logAt;
+  final double cal;
+  final double fat;
+  final double protein;
+  final double carbs;
+  final double targetCal;
+  final double targetFat;
+  final double targetCarbs;
+  final double targetProtein;
+
+  NutritionModel({
+    required this.logAt,
+    required this.cal,
     required this.fat,
+    required this.protein,
     required this.carbs,
+    required this.targetCal,
+    required this.targetFat,
+    required this.targetCarbs,
+    required this.targetProtein,
   });
+
+  factory NutritionModel.fromJson(Map<String, dynamic> json) {
+    return NutritionModel(
+      logAt: DateTime.parse(json['logAt']),
+      cal: (json['cal'] as num).toDouble(),
+      fat: (json['fat'] as num).toDouble(),
+      protein: (json['protein'] as num).toDouble(),
+      carbs: (json['carbs'] as num).toDouble(),
+      targetCal: (json['targetCal'] as num).toDouble(),
+      targetFat: (json['targetFat'] as num).toDouble(),
+      targetCarbs: (json['targetCarbs'] as num).toDouble(),
+      targetProtein: (json['targetProtein'] as num).toDouble(),
+    );
+  }
+}
+
+class NutritionWithMealsModel extends NutritionModel {
+  final List<MealModel> meals;
+
+  NutritionWithMealsModel({
+    required super.logAt,
+    required super.cal,
+    required super.fat,
+    required super.protein,
+    required super.carbs,
+    required super.targetCal,
+    required super.targetFat,
+    required super.targetCarbs,
+    required super.targetProtein,
+    required this.meals,
+  });
+
+  factory NutritionWithMealsModel.fromJson(Map<String, dynamic> json) {
+    return NutritionWithMealsModel(
+      logAt: DateTime.parse(json['logAt']),
+      cal: (json['cal'] as num).toDouble(),
+      fat: (json['fat'] as num).toDouble(),
+      protein: (json['protein'] as num).toDouble(),
+      carbs: (json['carbs'] as num).toDouble(),
+      targetCal: (json['targetCal'] as num).toDouble(),
+      targetFat: (json['targetFat'] as num).toDouble(),
+      targetCarbs: (json['targetCarbs'] as num).toDouble(),
+      targetProtein: (json['targetProtein'] as num).toDouble(),
+      meals: List<MealModel>.from(
+        json['meals'].map((meal) => MealModel.fromJson(meal)),
+      ),
+    );
+  }
 }

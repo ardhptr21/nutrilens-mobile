@@ -11,7 +11,7 @@ class HistoryCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isOverCalorie = item.totalCalories > item.calorieGoal;
+    final isOverCalorie = item.cal > item.targetCal;
 
     return Material(
       borderRadius: BorderRadius.circular(12),
@@ -31,7 +31,7 @@ class HistoryCardWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _DateBadge(date: item.date),
+                  _DateBadge(date: item.logAt.toLocal()),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -44,7 +44,7 @@ class HistoryCardWidget extends StatelessWidget {
                           : Colors.green.shade50,
                     ),
                     child: Text(
-                      '${item.totalCalories} kkal',
+                      '${item.cal} kkal',
                       style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isOverCalorie
@@ -165,7 +165,7 @@ class _NutrientProgressRow extends StatelessWidget {
 
 class _NutrientIndicator extends StatelessWidget {
   final String label;
-  final int value;
+  final double value;
   final int max;
   final Color color;
 
