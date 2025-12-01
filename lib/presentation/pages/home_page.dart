@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 65.0, horizontal: 40.0),
+        padding: const EdgeInsets.fromLTRB(40.0, 30.0, 40.0, 65.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
