@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutrilens/config/constant.dart';
+import 'package:nutrilens/config/api.dart';
 import 'package:nutrilens/models/meal_model.dart';
 
 class MealCardWidget extends StatelessWidget {
@@ -32,7 +32,7 @@ class MealCardWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  '$baseApiUrl/${meal.image}',
+                  '${ApiConfig.baseUrl}/${meal.image}',
                   width: 75,
                   height: 75,
                   fit: BoxFit.cover,

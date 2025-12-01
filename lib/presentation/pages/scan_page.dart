@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nutrilens/config/locator.dart';
+import 'package:nutrilens/network/http/nutrition/nutrition_model.dart';
+import 'package:nutrilens/network/http/nutrition/nutrition_service.dart';
+import 'package:nutrilens/presentation/pages/confirm_nutrition_page.dart';
 import 'package:nutrilens/presentation/widgets/scan/image_placeholder_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -17,10 +21,12 @@ class _ScanPageState extends State<ScanPage> {
   final TextEditingController _infoController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
   final stt.SpeechToText _speech = stt.SpeechToText();
+  final NutritionService _nutritionService = locator<NutritionService>();
 
   File? _capturedImage;
   bool _speechEnabled = false;
   bool _isListening = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -71,7 +77,6 @@ class _ScanPageState extends State<ScanPage> {
           });
         }
       },
-
       listenOptions: stt.SpeechListenOptions(
         partialResults: true,
         listenMode: stt.ListenMode.dictation,
@@ -215,6 +220,48 @@ class _ScanPageState extends State<ScanPage> {
     );
   }
 
+  Future<void> _handleScanSubmit() async {
+    if (_capturedImage == null) {
+      _showErrorDialog('Silakan pilih gambar terlebih dahulu.');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final request = NutritionScanRequest(
+        image: _capturedImage!,
+        detail: _infoController.text.trim(),
+      );
+
+      final response = await _nutritionService.nutritionScan(request);
+
+      if (!mounted) return;
+
+      if (response.success && response.data != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmNutritionPage(
+              scanResult: response.data!,
+              capturedImage: _capturedImage!,
+              description: _infoController.text.trim(),
+            ),
+          ),
+        );
+      } else {
+        _showErrorDialog(response.message);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorDialog('Terjadi kesalahan: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -284,7 +331,6 @@ class _ScanPageState extends State<ScanPage> {
                               ),
                             ),
                           ),
-
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -305,14 +351,23 @@ class _ScanPageState extends State<ScanPage> {
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
-                        onPressed: () {},
+                        onPressed: _isLoading ? null : _handleScanSubmit,
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text('Lanjutkan'),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text('Lanjutkan'),
                       ),
                     ),
                   ],

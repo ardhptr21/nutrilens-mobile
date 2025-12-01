@@ -6,7 +6,7 @@ import 'package:nutrilens/network/http/user/user_service.dart';
 
 final locator = GetIt.instance;
 
-void setupLocator() {
+void setupLocator() async {
   locator.registerLazySingleton<DioClient>(() => DioClient());
   locator.registerLazySingleton<AuthService>(() => AuthServiceImpl());
   locator.registerLazySingleton<UserService>(() => UserServiceImpl());

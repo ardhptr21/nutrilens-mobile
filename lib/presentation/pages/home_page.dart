@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutrilens/config/locator.dart';
+import 'package:nutrilens/main.dart';
 import 'package:nutrilens/models/api_model.dart';
 import 'package:nutrilens/models/meal_model.dart';
 import 'package:nutrilens/network/http/nutrition/nutrition_model.dart';
@@ -9,8 +10,41 @@ import 'package:nutrilens/network/http/user/user_service.dart';
 import 'package:nutrilens/presentation/widgets/card/meal_card_widget.dart';
 import 'package:nutrilens/presentation/widgets/card/nutrilent_card_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with RouteAware {
+  late Future<(UserMeResponse?, NutritionStatisticsResponse?)> _loadFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFuture = _loadData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final modalRoute = ModalRoute.of(context);
+    if (modalRoute != null) {
+      routeObserver.subscribe(this, modalRoute);
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _refresh();
+  }
 
   Future<(UserMeResponse?, NutritionStatisticsResponse?)> _loadData() async {
     final userService = locator<UserService>();
@@ -28,13 +62,19 @@ class HomePage extends StatelessWidget {
     return (userResponse.data, nutritionResponse.data);
   }
 
+  void _refresh() {
+    setState(() {
+      _loadFuture = _loadData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
     return FutureBuilder<(UserMeResponse?, NutritionStatisticsResponse?)>(
-      future: _loadData(),
+      future: _loadFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -129,7 +169,6 @@ class HomePage extends StatelessWidget {
                     valueColor: const AlwaysStoppedAnimation(Colors.green),
                   ),
                 ),
-
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

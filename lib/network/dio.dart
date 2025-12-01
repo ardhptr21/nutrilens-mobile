@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:nutrilens/config/constant.dart';
+import 'package:nutrilens/config/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DioClient {
@@ -11,9 +11,9 @@ class DioClient {
   DioClient._internal() {
     dio = Dio(
       BaseOptions(
-        baseUrl: baseApiUrl,
+        baseUrl: ApiConfig.baseUrl,
         connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 60),
         headers: {'Content-Type': 'application/json'},
         validateStatus: (status) {
           return true;
