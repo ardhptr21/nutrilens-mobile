@@ -7,6 +7,9 @@ import 'package:nutrilens/network/http/nutrition/nutrition_model.dart';
 abstract class NutritionService {
   Future<APIResponse<NutritionStatisticsResponse>>
   getNutritionStatisticsToday();
+  Future<APIResponse<List<NutritionStatisticsResponse>>> getNutritionHistory(
+    int days,
+  );
   Future<APIResponse<NutritionScanResponse>> nutritionScan(
     NutritionScanRequest request,
   );
@@ -25,6 +28,36 @@ class NutritionServiceImpl implements NutritionService {
     return APIResponse.fromJson(
       res.data,
       (data) => NutritionStatisticsResponse.fromJson(data),
+    );
+  }
+
+  @override
+  Future<APIResponse<List<NutritionStatisticsResponse>>> getNutritionHistory(
+    int days,
+  ) async {
+    final List<NutritionStatisticsResponse> history = [];
+
+    for (int i = days - 1; i >= 0; i--) {
+      final date = DateTime.now().subtract(Duration(days: i));
+      final formattedDate =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+
+      try {
+        final res = await _dio.get('/nutritions/$formattedDate');
+        final nutritionData = NutritionStatisticsResponse.fromJson(
+          res.data['data'],
+        );
+        history.add(nutritionData);
+      } catch (e) {
+        // Skip if no data for this date
+      }
+    }
+
+    return APIResponse<List<NutritionStatisticsResponse>>(
+      success: true,
+      message: 'Nutrition history retrieved',
+      data: history,
+      statusCode: 200,
     );
   }
 

@@ -14,6 +14,7 @@ class WidgetTree extends StatefulWidget {
 
 class _WidgetTreeState extends State<WidgetTree> {
   int _selectedIndex = 0;
+  final GlobalKey _historyPageKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,10 @@ class _WidgetTreeState extends State<WidgetTree> {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: const [HomePage(), HistoryPage()],
+        children: [
+          const HomePage(),
+          HistoryPage(key: _historyPageKey),
+        ],
       ),
       floatingActionButton: SizedBox(
         width: 70,
@@ -49,7 +53,11 @@ class _WidgetTreeState extends State<WidgetTree> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ScanPage()),
-            ),
+            ).then((_) {
+              // Refresh history when returning from scan
+              final state = _historyPageKey.currentState as HistoryPageState?;
+              state?.refreshHistory();
+            }),
           },
         ),
       ),
@@ -63,6 +71,11 @@ class _WidgetTreeState extends State<WidgetTree> {
         onTap: (value) {
           setState(() {
             _selectedIndex = value;
+            // Refresh history when navigating to history tab
+            if (value == 1) {
+              final state = _historyPageKey.currentState as HistoryPageState?;
+              state?.refreshHistory();
+            }
           });
         },
       ),
