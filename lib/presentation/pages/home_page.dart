@@ -10,6 +10,10 @@ import 'package:nutrilens/network/http/user/user_service.dart';
 import 'package:nutrilens/presentation/widgets/card/meal_card_widget.dart';
 import 'package:nutrilens/presentation/widgets/card/nutrilent_card_widget.dart';
 
+abstract class HomePageState {
+  void refresh();
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,13 +21,22 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with RouteAware {
+class _HomePageState extends State<HomePage>
+    with RouteAware
+    implements HomePageState {
   late Future<(UserMeResponse?, NutritionStatisticsResponse?)> _loadFuture;
 
   @override
   void initState() {
     super.initState();
     _loadFuture = _loadData();
+  }
+
+  @override
+  void refresh() {
+    setState(() {
+      _loadFuture = _loadData();
+    });
   }
 
   @override

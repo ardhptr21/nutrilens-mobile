@@ -13,17 +13,14 @@ class HistoryCardWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final isOverCalorie = item.cal > item.targetCal;
 
-    return Material(
-      borderRadius: BorderRadius.circular(12),
+    return Card(
       color: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200, width: 1),
-          ),
+        child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

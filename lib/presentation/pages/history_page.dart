@@ -6,7 +6,6 @@ import 'package:nutrilens/presentation/widgets/card/history_card_widget.dart';
 
 import 'history_detail_page.dart';
 
-// Public interface for HistoryPage state
 abstract class HistoryPageState {
   void refreshHistory();
 }
@@ -18,7 +17,6 @@ class HistoryPage extends StatefulWidget {
   State<HistoryPage> createState() => _HistoryPageState();
 }
 
-// Export this state for use in widget tree
 class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
   late final NutritionService _nutritionService;
   late Future<List<NutritionModel>> _historyFuture;
@@ -41,14 +39,12 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
     try {
       final response = await _nutritionService.getNutritionHistory(30);
       if (response.success && response.data != null) {
-        // Deduplicate by date - keep only one entry per day
         final Map<String, NutritionModel> uniqueByDate = {};
 
         for (final nutrition in response.data!) {
           final dateKey =
               '${nutrition.logAt.year}-${nutrition.logAt.month}-${nutrition.logAt.day}';
 
-          // If already exists for this date, keep the one with more calories (more complete)
           if (uniqueByDate.containsKey(dateKey)) {
             if (nutrition.cal > uniqueByDate[dateKey]!.cal) {
               uniqueByDate[dateKey] = NutritionModel(
@@ -78,7 +74,6 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
           }
         }
 
-        // Sort by date descending (newest first)
         final items = uniqueByDate.values.toList();
         items.sort((a, b) => b.logAt.compareTo(a.logAt));
 

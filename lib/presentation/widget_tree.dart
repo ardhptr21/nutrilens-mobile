@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nutrilens/presentation/pages/history_page.dart';
 import 'package:nutrilens/presentation/pages/home_page.dart';
-import 'package:nutrilens/presentation/pages/login_page.dart';
 import 'package:nutrilens/presentation/pages/scan_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nutrilens/presentation/pages/settings_page.dart';
 
 class WidgetTree extends StatefulWidget {
   const WidgetTree({super.key});
@@ -15,30 +14,48 @@ class WidgetTree extends StatefulWidget {
 class _WidgetTreeState extends State<WidgetTree> {
   int _selectedIndex = 0;
   final GlobalKey _historyPageKey = GlobalKey();
+  final GlobalKey _homePageKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.white,
-        actions: [
-          TextButton(
-            onPressed: _handleLogout,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Text('Logout', style: TextStyle(color: Colors.red)),
-                SizedBox(width: 10),
-                Icon(Icons.logout, color: Colors.red),
-              ],
+        leading: Row(
+          children: [
+            const SizedBox(width: 12),
+            Image.asset(
+              'assets/images/logo.png', // your logo
+              height: 26,
             ),
+            const SizedBox(width: 10),
+            const Text(
+              'Nutrilens',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        leadingWidth: 160,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
           ),
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          const HomePage(),
+          HomePage(key: _homePageKey),
           HistoryPage(key: _historyPageKey),
         ],
       ),
@@ -53,11 +70,7 @@ class _WidgetTreeState extends State<WidgetTree> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ScanPage()),
-            ).then((_) {
-              // Refresh history when returning from scan
-              final state = _historyPageKey.currentState as HistoryPageState?;
-              state?.refreshHistory();
-            }),
+            ),
           },
         ),
       ),
@@ -71,7 +84,11 @@ class _WidgetTreeState extends State<WidgetTree> {
         onTap: (value) {
           setState(() {
             _selectedIndex = value;
-            // Refresh history when navigating to history tab
+            if (value == 0) {
+              final state = _homePageKey.currentState as HomePageState?;
+              state?.refresh();
+            }
+
             if (value == 1) {
               final state = _historyPageKey.currentState as HistoryPageState?;
               state?.refreshHistory();
@@ -79,19 +96,6 @@ class _WidgetTreeState extends State<WidgetTree> {
           });
         },
       ),
-    );
-  }
-
-  void _handleLogout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
-
-    if (!mounted) return;
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
-      (route) => false,
     );
   }
 }
