@@ -6,6 +6,7 @@ import 'package:nutrilens/presentation/bloc/auth/auth_bloc.dart';
 import 'package:nutrilens/presentation/bloc/auth/auth_event.dart';
 import 'package:nutrilens/presentation/bloc/auth/auth_state.dart';
 import 'package:nutrilens/presentation/pages/login_page.dart';
+import 'package:nutrilens/presentation/pages/onboarding_page.dart';
 import 'package:nutrilens/presentation/widget_tree.dart';
 
 final RouteObserver<ModalRoute<void>> routeObserver =
@@ -59,6 +60,8 @@ class NutriLens extends StatelessWidget {
             );
           } else if (state is AuthAuthenticated) {
             return const WidgetTree();
+          } else if (state is AuthOnboardingRequired) {
+            return const OnboardingPage();
           }
           return const LoginPage();
         },

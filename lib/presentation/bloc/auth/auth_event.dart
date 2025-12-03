@@ -8,3 +8,5 @@ class LoggedIn extends AuthEvent {
 }
 
 class LoggedOut extends AuthEvent {}
+
+class OnboardingCompleted extends AuthEvent {}
