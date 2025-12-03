@@ -84,73 +84,109 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pengaturan'), centerTitle: true),
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text('Pengaturan'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Card(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 15,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Akun',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF4CAF50),
+                                    Color(0xFF66BB6A),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.person_rounded,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Informasi Akun',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E3842),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         _isLoadingUser
                             ? const Center(
                                 child: Padding(
                                   padding: EdgeInsets.all(16.0),
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(
+                                      Color(0xFF4CAF50),
+                                    ),
+                                  ),
                                 ),
                               )
                             : Column(
                                 children: [
                                   TextField(
                                     controller: nameController,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Nama',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                      hintText: 'Masukkan nama Anda',
+                                      prefixIcon: Icon(
+                                        Icons.badge_rounded,
+                                        color: Color(0xFF4CAF50),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 20),
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 50,
-                                    child: ElevatedButton(
+                                    height: 56,
+                                    child: ElevatedButton.icon(
                                       onPressed: _handleSaveAccount,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                        ),
+                                      icon: const Icon(
+                                        Icons.save_rounded,
+                                        size: 20,
                                       ),
-                                      child: const Text(
-                                        'Simpan',
+                                      label: const Text(
+                                        'Simpan Perubahan',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
@@ -162,33 +198,65 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-                Card(
-                  color: Colors.white,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 15,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Preferensi',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF9800),
+                                    Color(0xFFFFB74D),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.track_changes_rounded,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'Target Nutrisi',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E3842),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
                         _isLoadingPreferences
                             ? const Center(
                                 child: Padding(
                                   padding: EdgeInsets.all(16.0),
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation(
+                                      Color(0xFF4CAF50),
+                                    ),
+                                  ),
                                 ),
                               )
                             : Column(
@@ -196,12 +264,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   TextField(
                                     controller: caloryController,
                                     keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
-                                      labelText: 'Kalori (kal)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Kalori (kkal)',
+                                      hintText: 'Target kalori harian',
+                                      prefixIcon: Icon(
+                                        Icons.local_fire_department_rounded,
+                                        color: Color(0xFFF44336),
                                       ),
                                     ),
                                   ),
@@ -209,12 +277,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   TextField(
                                     controller: proteinController,
                                     keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Protein (g)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                      hintText: 'Target protein harian',
+                                      prefixIcon: Icon(
+                                        Icons.set_meal_rounded,
+                                        color: Color(0xFFFFB74D),
                                       ),
                                     ),
                                   ),
@@ -222,12 +290,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   TextField(
                                     controller: fatController,
                                     keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Lemak (g)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                      hintText: 'Target lemak harian',
+                                      prefixIcon: Icon(
+                                        Icons.opacity_rounded,
+                                        color: Color(0xFFF44336),
                                       ),
                                     ),
                                   ),
@@ -235,34 +303,30 @@ class _SettingsPageState extends State<SettingsPage> {
                                   TextField(
                                     controller: carbsController,
                                     keyboardType: TextInputType.number,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Karbohidrat (g)',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
+                                      hintText: 'Target karbohidrat harian',
+                                      prefixIcon: Icon(
+                                        Icons.rice_bowl_rounded,
+                                        color: Color(0xFFFF9800),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 20),
                                   SizedBox(
                                     width: double.infinity,
-                                    height: 50,
-                                    child: ElevatedButton(
+                                    height: 56,
+                                    child: ElevatedButton.icon(
                                       onPressed: _handleSavePreferences,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                        ),
+                                      icon: const Icon(
+                                        Icons.save_rounded,
+                                        size: 20,
                                       ),
-                                      child: const Text(
-                                        'Simpan',
+                                      label: const Text(
+                                        'Simpan Preferensi',
                                         style: TextStyle(
                                           fontSize: 16,
-                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
@@ -274,29 +338,31 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
 
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
-                  child: OutlinedButton(
+                  height: 56,
+                  child: OutlinedButton.icon(
                     onPressed: _handleLogout,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Keluar',
+                    icon: const Icon(Icons.logout_rounded, size: 22),
+                    label: const Text(
+                      'Keluar dari Akun',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

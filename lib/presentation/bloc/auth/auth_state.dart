@@ -7,5 +7,3 @@ class AuthLoading extends AuthState {}
 class AuthAuthenticated extends AuthState {}
 
 class AuthUnauthenticated extends AuthState {}
-
-class AuthOnboardingRequired extends AuthState {}

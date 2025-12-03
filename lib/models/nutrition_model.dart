@@ -24,10 +24,8 @@ class NutritionModel {
   });
 
   factory NutritionModel.fromJson(Map<String, dynamic> json) {
-    // Parse date and ensure we get the date part only (no time)
     final dateStr = json['logAt'] as String;
     final parsedDate = DateTime.parse(dateStr);
-    // Use local timezone, take only the date part
     final localDate = parsedDate.toLocal();
     final dateOnly = DateTime(localDate.year, localDate.month, localDate.day);
 
@@ -62,10 +60,8 @@ class NutritionWithMealsModel extends NutritionModel {
   });
 
   factory NutritionWithMealsModel.fromJson(Map<String, dynamic> json) {
-    // Parse date and ensure we get the date part only (no time)
     final dateStr = json['logAt'] as String;
     final parsedDate = DateTime.parse(dateStr);
-    // Use local timezone, take only the date part
     final localDate = parsedDate.toLocal();
     final dateOnly = DateTime(localDate.year, localDate.month, localDate.day);
 

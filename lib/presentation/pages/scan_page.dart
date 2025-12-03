@@ -267,15 +267,23 @@ class _ScanPageState extends State<ScanPage> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pindai Gambar'), centerTitle: true),
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text('Pindai Gambar'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 40,
-                  horizontal: 32,
+                  vertical: 24,
+                  horizontal: 24,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,61 +293,125 @@ class _ScanPageState extends State<ScanPage> {
                       onTap: _showImageSourceDialog,
                     ),
                     if (_capturedImage != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        'Ketuk gambar di atas untuk mengganti foto.',
-                        style: textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                          fontStyle: FontStyle.italic,
-                        ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 16,
+                            color: Colors.grey.shade600,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Ketuk gambar di atas untuk mengganti foto',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                    const SizedBox(height: 24),
-                    Text(
-                      'Informasi Tambahan (Optional)',
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade700,
-                      ),
+                    const SizedBox(height: 32),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.description_outlined,
+                          size: 20,
+                          color: const Color(0xFF4CAF50),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Informasi Tambahan (Opsional)',
+                          style: textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      padding: const EdgeInsets.only(bottom: 8, right: 8),
+                    const SizedBox(height: 12),
+                    Container(
                       decoration: BoxDecoration(
+                        color: Colors.white,
                         border: Border.all(
                           color: _isListening
-                              ? Colors.green
-                              : Colors.grey.shade400,
-                          width: _isListening ? 2.5 : 1.5,
+                              ? const Color(0xFF4CAF50)
+                              : Colors.grey.shade300,
+                          width: _isListening ? 2 : 1.5,
                         ),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                (_isListening
+                                        ? const Color(0xFF4CAF50)
+                                        : Colors.black)
+                                    .withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Stack(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 48),
+                          Expanded(
                             child: TextField(
                               controller: _infoController,
                               maxLines: 5,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: InputBorder.none,
-                                contentPadding: const EdgeInsets.all(12),
-                                hintText: 'Tambahkan informasi tambahan...',
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                                hintText:
+                                    'Contoh: Nasi goreng dengan telur, porsi sedang...',
                                 hintStyle: TextStyle(
-                                  color: Colors.grey.shade500,
+                                  color: Colors.grey,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
+                          const SizedBox(width: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: _isListening
+                                  ? const LinearGradient(
+                                      colors: [
+                                        Color(0xFF4CAF50),
+                                        Color(0xFF66BB6A),
+                                      ],
+                                    )
+                                  : null,
+                              color: _isListening ? null : Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                              boxShadow: _isListening
+                                  ? [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFF4CAF50,
+                                        ).withValues(alpha: 0.4),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
                             child: IconButton(
                               icon: Icon(
-                                _isListening ? Icons.mic : Icons.mic_none,
+                                _isListening
+                                    ? Icons.mic_rounded
+                                    : Icons.mic_none_rounded,
                                 color: _isListening
-                                    ? Colors.green
+                                    ? Colors.white
                                     : Colors.grey.shade600,
+                                size: 24,
                               ),
                               onPressed: _toggleListening,
                             ),
@@ -347,30 +419,105 @@ class _ScanPageState extends State<ScanPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: _isLoading ? null : _handleScanSubmit,
-                        style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
+                    if (_isListening) ...[
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: const Duration(milliseconds: 800),
+                                  builder: (context, value, child) {
+                                    return Icon(
+                                      Icons.graphic_eq_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    );
+                                  },
                                 ),
-                              )
-                            : const Text('Lanjutkan'),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Mendengarkan...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
                   ],
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -3),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleScanSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CAF50),
+                    foregroundColor: Colors.white,
+                    elevation: 3,
+                    shadowColor: const Color(0xFF4CAF50).withValues(alpha: 0.5),
+                    disabledBackgroundColor: Colors.grey.shade300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Lanjutkan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.arrow_forward_rounded, size: 22),
+                          ],
+                        ),
                 ),
               ),
             ),

@@ -18,41 +18,81 @@ class ImagePlaceholderWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        height: 220,
+        height: 240,
         decoration: BoxDecoration(
-          color: Colors.green.shade100,
-          borderRadius: BorderRadius.circular(8.0),
-          border: Border.all(color: Colors.green.shade400, width: 1.5),
+          gradient: capturedImage == null
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                    const Color(0xFF66BB6A).withValues(alpha: 0.1),
+                  ],
+                )
+              : null,
+          color: capturedImage != null ? Colors.grey.shade100 : null,
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(
+            color: const Color(0xFF4CAF50).withValues(alpha: 0.4),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: capturedImage == null
-            ? Stack(
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomPaint(
-                    size: const Size(double.infinity, 220),
-                    painter: XPatternPainter(),
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add_a_photo,
-                          size: 48,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Ketuk untuk mengambil gambar',
-                          style: TextStyle(color: Colors.green.shade600),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
+                    child: const Icon(
+                      Icons.add_a_photo_rounded,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Ketuk untuk ambil gambar',
+                    style: TextStyle(
+                      color: const Color(0xFF4CAF50),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Foto makanan atau minuman Anda',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                   ),
                 ],
               )
             : ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.file(capturedImage!, fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(18.0),
+                child: Image.file(
+                  capturedImage!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               ),
       ),
     );

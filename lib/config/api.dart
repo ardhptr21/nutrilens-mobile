@@ -11,6 +11,6 @@ class ApiConfig {
     final url = dotenv.env['BASE_API_URL'];
     if (url != null && url.isNotEmpty) return url;
 
-    return 'https://4b85c5851729.ngrok-free.app';
+    return 'http://10.10.10.2:8000';
   }
 }

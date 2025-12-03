@@ -8,7 +8,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AppStarted>(_onAppStarted);
     on<LoggedIn>(_onLoggedIn);
     on<LoggedOut>(_onLoggedOut);
-    on<OnboardingCompleted>(_onOnboardingCompleted);
   }
 
   Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
@@ -16,14 +15,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final onboardingCompleted = prefs.getBool('onboarding_completed') ?? false;
 
     if (token != null && token.isNotEmpty) {
       emit(AuthAuthenticated());
-    } else if (onboardingCompleted) {
-      emit(AuthUnauthenticated());
     } else {
-      emit(AuthOnboardingRequired());
+      emit(AuthUnauthenticated());
     }
   }
 
@@ -36,15 +32,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
-    emit(AuthUnauthenticated());
-  }
-
-  Future<void> _onOnboardingCompleted(
-    OnboardingCompleted event,
-    Emitter<AuthState> emit,
-  ) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_completed', true);
     emit(AuthUnauthenticated());
   }
 }

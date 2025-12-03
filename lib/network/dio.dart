@@ -13,8 +13,8 @@ class DioClient {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiConfig.baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 60),
+        connectTimeout: const Duration(seconds: 120),
+        receiveTimeout: const Duration(seconds: 120),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -38,7 +38,6 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Use cached token to avoid repeated SharedPreferences reads
           if (_cachedToken == null) {
             await _loadToken();
           }
@@ -56,7 +55,7 @@ class DioClient {
           if (error.response?.statusCode == 401) {
             final prefs = await SharedPreferences.getInstance();
             await prefs.remove('token');
-            _cachedToken = null; // Clear cache
+            _cachedToken = null;
           }
 
           return handler.next(error);

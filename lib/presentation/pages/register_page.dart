@@ -10,84 +10,116 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: 40.0,
-              horizontal: 40.0,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF4CAF50).withValues(alpha: 0.05),
+              const Color(0xFF81C784).withValues(alpha: 0.05),
+              Colors.white,
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 40.0,
+                  horizontal: 32.0,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/images/logo.png',
-                      width: 35,
-                      height: 35,
+                    Center(
+                      child: Hero(
+                        tag: 'logo',
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFF4CAF50,
+                                ).withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            width: 60,
+                            height: 60,
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        'NutriLens',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF4CAF50),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 48),
                     Text(
-                      'NutriLens',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.green,
-                        letterSpacing: 1.5,
+                      'Daftar Akun Baru 🌟',
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Buat akun untuk memulai perjalanan hidup sehat Anda bersama kami.',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    const _RegisterForm(),
+                    const SizedBox(height: 32),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sudah punya akun? ',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Masuk Sekarang',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: const Color(0xFF4CAF50),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 32),
-                Text(
-                  'Daftar',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Buat akun baru Anda untuk memulai perjalanan sehat Anda.',
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                ),
-                SizedBox(height: 32),
-                const _RegisterForm(),
-                SizedBox(height: 24),
-                Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sudah punya akun? ',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Masuk',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 64),
-              ],
+              ),
             ),
           ),
         ),
@@ -122,49 +154,54 @@ class __RegisterFormState extends State<_RegisterForm> {
       children: [
         TextField(
           controller: nameController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Nama',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+            hintText: 'Masukkan nama lengkap',
+            prefixIcon: Icon(Icons.person_outline, color: Color(0xFF4CAF50)),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 20),
         TextField(
           controller: emailController,
-          decoration: InputDecoration(
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
             labelText: 'Email',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+            hintText: 'Masukkan email Anda',
+            prefixIcon: Icon(Icons.email_outlined, color: Color(0xFF4CAF50)),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 20),
         TextField(
           controller: passwordController,
           obscureText: true,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Kata Sandi',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+            hintText: 'Buat kata sandi',
+            prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF4CAF50)),
           ),
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 32),
         SizedBox(
           width: double.infinity,
-          height: 50,
+          height: 56,
           child: ElevatedButton(
             onPressed: _handleRegister,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFF4CAF50),
+              foregroundColor: Colors.white,
+              elevation: 3,
+              shadowColor: const Color(0xFF4CAF50).withValues(alpha: 0.5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Daftar',
-              style: TextStyle(fontSize: 18, color: Colors.white),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
         ),

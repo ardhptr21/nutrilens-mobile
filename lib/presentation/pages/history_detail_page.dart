@@ -22,7 +22,6 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize date formatting for Indonesian locale
     initializeDateFormatting('id_ID');
     _mealsFuture = _fetchMealsForDate();
   }
@@ -76,18 +75,15 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Calorie Circle
                   _buildCalorieCircle(
                     calories: nutritionData.cal,
                     target: nutritionData.targetCal,
                   ),
                   const SizedBox(height: 32.0),
 
-                  // Nutrient Cards
                   _buildNutrientCards(nutritionData),
                   const SizedBox(height: 32.0),
 
-                  // Meals Section
                   _buildMealsSection(nutritionData.meals, context),
                   const SizedBox(height: 20.0),
                 ],
@@ -106,84 +102,127 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     final progress = (target == 0) ? 0 : (calories / target).clamp(0, 1);
     final isAchieved = calories >= target;
 
-    // Check if the date is today or in the past
-    final today = DateTime.now();
-    final dateOnly = DateTime(today.year, today.month, today.day);
-    final isToday = widget.nutrition.logAt == dateOnly;
-    final statusText = isAchieved
-        ? '✓ Tercapai'
-        : (isToday ? 'Belum Tercapai' : 'Tidak Tercapai');
-
     return Center(
       child: Column(
         children: [
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: progress.toDouble()),
-            duration: const Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeOutCubic,
             builder: (context, value, child) {
-              return SizedBox(
-                width: 220,
-                height: 220,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 220,
-                      height: 220,
-                      child: CircularProgressIndicator(
-                        value: value,
-                        strokeWidth: 12,
-                        backgroundColor: Colors.grey.shade200,
-                        valueColor: AlwaysStoppedAnimation(
-                          isAchieved ? Colors.green : Colors.blue,
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          calories.toStringAsFixed(0),
-                          style: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'dari ${target.toStringAsFixed(0)} kkal',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isAchieved
-                                ? Colors.green.shade50
-                                : Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            statusText,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isAchieved
-                                  ? Colors.green.shade700
-                                  : Colors.blue.shade700,
-                            ),
-                          ),
-                        ),
-                      ],
+              return Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isAchieved ? Colors.green : Colors.blue)
+                          .withValues(alpha: 0.2),
+                      blurRadius: 30,
+                      spreadRadius: 10,
                     ),
                   ],
+                ),
+                child: SizedBox(
+                  width: 240,
+                  height: 240,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      SizedBox(
+                        width: 240,
+                        height: 240,
+                        child: CircularProgressIndicator(
+                          value: value,
+                          strokeWidth: 14,
+                          backgroundColor: Colors.grey.shade200,
+                          strokeCap: StrokeCap.round,
+                          valueColor: AlwaysStoppedAnimation(
+                            isAchieved
+                                ? const Color(0xFF4CAF50)
+                                : const Color(0xFF2196F3),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            calories.toStringAsFixed(0),
+                            style: TextStyle(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: isAchieved
+                                  ? const Color(0xFF4CAF50)
+                                  : const Color(0xFF2196F3),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'dari ${target.toStringAsFixed(0)} kkal',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: isAchieved
+                                    ? [
+                                        const Color(0xFF4CAF50),
+                                        const Color(0xFF66BB6A),
+                                      ]
+                                    : [
+                                        const Color(0xFF2196F3),
+                                        const Color(0xFF42A5F5),
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      (isAchieved
+                                              ? const Color(0xFF4CAF50)
+                                              : const Color(0xFF2196F3))
+                                          .withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  isAchieved
+                                      ? Icons.check_circle_rounded
+                                      : Icons.pending_rounded,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  isAchieved ? 'Tercapai!' : 'Dalam Proses',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -197,20 +236,37 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Target',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Icon(
+              Icons.track_changes_rounded,
+              size: 24,
+              color: const Color(0xFF4CAF50),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Target Nutrisi Harian',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            border: Border.all(color: Colors.grey.shade300, width: 1.0),
+            borderRadius: BorderRadius.circular(20.0),
+            border: Border.all(color: Colors.grey.shade300, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.all(4.0),
           child: Column(
             children: [
               _buildNutrientRow(
@@ -254,7 +310,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     final isAchieved = value >= target;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -263,36 +319,82 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
             children: [
               Row(
                 children: [
-                  Icon(icon, size: 18, color: color),
-                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, size: 20, color: color),
+                  ),
+                  const SizedBox(width: 12),
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF2E3842),
                     ),
                   ),
                 ],
               ),
-              Text(
-                '${value.toStringAsFixed(1)}g / ${target.toStringAsFixed(0)}g',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isAchieved ? Colors.green : Colors.black87,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isAchieved
+                        ? [const Color(0xFF4CAF50), const Color(0xFF66BB6A)]
+                        : [
+                            color.withValues(alpha: 0.2),
+                            color.withValues(alpha: 0.1),
+                          ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${value.toStringAsFixed(1)}g / ${target.toStringAsFixed(0)}g',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: isAchieved ? Colors.white : color,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: progress.toDouble(),
-              backgroundColor: Colors.grey.shade300,
-              color: color,
-              minHeight: 6,
-            ),
+          const SizedBox(height: 12),
+          Stack(
+            children: [
+              Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              FractionallySizedBox(
+                widthFactor: progress.toDouble(),
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [color.withValues(alpha: 0.7), color],
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -305,13 +407,23 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Makanan & Minuman',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          children: [
+            Icon(
+              Icons.restaurant_menu_rounded,
+              size: 24,
+              color: const Color(0xFF4CAF50),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Makanan & Minuman',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         if (meals.isEmpty)
           Container(
             width: double.infinity,

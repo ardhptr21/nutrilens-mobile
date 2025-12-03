@@ -91,25 +91,58 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+        padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                'Riwayat',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.history_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Text(
+                  'Riwayat',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 20),
             Expanded(
               child: FutureBuilder<List<NutritionModel>>(
                 future: _historyFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(
+                              Color(0xFF4CAF50),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Memuat riwayat...',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   if (snapshot.hasError) {
@@ -117,17 +150,46 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.error_outline, size: 48),
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.error_outline_rounded,
+                              size: 48,
+                              color: Colors.red.shade400,
+                            ),
+                          ),
                           const SizedBox(height: 16),
-                          Text('Error: ${snapshot.error}'),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
+                          Text(
+                            'Terjadi kesalahan',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Error: ${snapshot.error}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
                             onPressed: () {
                               setState(() {
                                 _historyFuture = _fetchNutritionHistory();
                               });
                             },
-                            child: const Text('Retry'),
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('Coba Lagi'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -141,16 +203,31 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.history,
-                            size: 48,
-                            color: Colors.grey[400],
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.history_rounded,
+                              size: 60,
+                              color: Colors.grey.shade400,
+                            ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
                           Text(
-                            'Belum ada riwayat apapun',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.grey[600],
+                            'Belum ada riwayat',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Mulai catat makanan Anda untuk\nmelihat riwayat nutrisi',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -160,8 +237,9 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
 
                   return ListView.separated(
                     itemCount: items.length,
+                    padding: const EdgeInsets.only(bottom: 80),
                     separatorBuilder: (context, _) =>
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                     itemBuilder: (context, index) {
                       final item = items[index];
                       return HistoryCardWidget(
