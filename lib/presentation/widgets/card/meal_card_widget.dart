@@ -10,106 +10,117 @@ class MealCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 18),
+      margin: EdgeInsets.zero,
       color: Colors.white,
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                '${ApiConfig.baseUrl}/${meal.image}',
+                width: double.infinity,
+                height: 180,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.image_not_supported),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Title and time
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    '${ApiConfig.baseUrl}/${meal.image}',
-                    width: 75,
-                    height: 75,
-                    fit: BoxFit.cover,
+                Expanded(
+                  child: Text(
+                    meal.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const SizedBox(width: 16),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              meal.name,
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                height: 1.1,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "${meal.createdAt.hour.toString().padLeft(2, '0')}:${meal.createdAt.minute.toString().padLeft(2, '0')}",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 6),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '${meal.cal.toStringAsFixed(0)} kkal',
-                          style: TextStyle(
-                            color: Colors.green.shade700,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                Text(
+                  "${meal.createdAt.hour.toString().padLeft(2, '0')}:${meal.createdAt.minute.toString().padLeft(2, '0')}",
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                 ),
               ],
             ),
+            const SizedBox(height: 8),
 
-            const SizedBox(height: 16),
+            // Calories badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${meal.cal.toStringAsFixed(0)} kkal',
+                style: TextStyle(
+                  color: Colors.green.shade700,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Description if available
+            if (meal.description != null && meal.description!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  meal.description!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+
+            // Nutrients grid
+            GridView.count(
+              crossAxisCount: 3,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 1.2,
               children: [
-                _nutriChip(
-                  Icons.set_meal,
+                _buildNutrientBox(
                   'Protein',
-                  meal.protein,
+                  '${meal.protein.toStringAsFixed(1)}g',
                   Colors.yellow.shade100,
+                  Icons.set_meal,
                 ),
-                const SizedBox(height: 8),
-                _nutriChip(
-                  Icons.rice_bowl,
+                _buildNutrientBox(
                   'Karbohidrat',
-                  meal.carbs,
+                  '${meal.carbs.toStringAsFixed(1)}g',
                   Colors.orange.shade100,
+                  Icons.rice_bowl,
                 ),
-                const SizedBox(height: 8),
-                _nutriChip(
-                  Icons.opacity,
+                _buildNutrientBox(
                   'Lemak',
-                  meal.fat,
+                  '${meal.fat.toStringAsFixed(1)}g',
                   Colors.red.shade100,
+                  Icons.opacity,
                 ),
               ],
             ),
@@ -119,21 +130,32 @@ class MealCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _nutriChip(IconData icon, String label, double value, Color color) {
+  Widget _buildNutrientBox(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 16),
-          const SizedBox(width: 6),
+          const SizedBox(height: 4),
           Text(
-            '$label ${value.toStringAsFixed(1)}g',
-            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+            value,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 10),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
