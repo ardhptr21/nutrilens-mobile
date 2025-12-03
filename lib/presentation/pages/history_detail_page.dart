@@ -198,7 +198,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Target Nutrisi',
+          'Target',
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -306,7 +306,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Makanan Hari Ini',
+          'Makanan & Minuman',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),

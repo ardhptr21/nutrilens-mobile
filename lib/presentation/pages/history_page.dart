@@ -98,7 +98,7 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
-                'Riwayat Nutrisi',
+                'Riwayat',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -148,7 +148,7 @@ class _HistoryPageState extends State<HistoryPage> implements HistoryPageState {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Belum ada riwayat nutrisi',
+                            'Belum ada riwayat apapun',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: Colors.grey[600],
                             ),

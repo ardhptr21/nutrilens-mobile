@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Target Nutrisi',
+          'Target',
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -356,7 +356,7 @@ class _HomePageState extends State<HomePage>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Riwayat Makanan Hari Ini',
+          'Makanan & Minuman',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
