@@ -47,7 +47,7 @@ class NutriLens extends StatelessWidget {
       title: 'NutriLens',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
+          seedColor: Colors.white,
           brightness: Brightness.light,
         ),
       ),
