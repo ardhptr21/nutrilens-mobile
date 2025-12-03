@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:nutrilens/config/locator.dart';
 import 'package:nutrilens/models/api_model.dart';
+import 'package:nutrilens/models/nutrition_model.dart';
 import 'package:nutrilens/network/dio.dart';
 import 'package:nutrilens/network/http/nutrition/nutrition_model.dart';
 
@@ -9,6 +10,9 @@ abstract class NutritionService {
   getNutritionStatisticsToday();
   Future<APIResponse<List<NutritionStatisticsResponse>>> getNutritionHistory(
     int days,
+  );
+  Future<APIResponse<NutritionWithMealsModel>> getNutritionHistoryDetail(
+    String date,
   );
   Future<APIResponse<NutritionScanResponse>> nutritionScan(
     NutritionScanRequest request,
@@ -58,6 +62,17 @@ class NutritionServiceImpl implements NutritionService {
       message: 'Nutrition history retrieved',
       data: history,
       statusCode: 200,
+    );
+  }
+
+  @override
+  Future<APIResponse<NutritionWithMealsModel>> getNutritionHistoryDetail(
+    String date,
+  ) async {
+    final res = await _dio.get('/nutritions/$date');
+    return APIResponse.fromJson(
+      res.data,
+      (data) => NutritionWithMealsModel.fromJson(data),
     );
   }
 
